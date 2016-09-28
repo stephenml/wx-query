@@ -24,9 +24,10 @@
 }
 
 .body {
+    height : 900rpx;
     padding-left : 30rpx;
     padding-right : 30rpx;
-    overflow : hidden;
+    overflow-y : scroll;
 }
 
 .widgets-item {
