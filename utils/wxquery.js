@@ -110,178 +110,183 @@ Array.prototype.remove = function(val) {
  * wxQuery
  */
 var $ = function (id) {
-    return {
-        hasStyle : function (key, val) {
-            var style = _getValue(id, 'style');
-            if (style) {
-                style = _styleToJson(style);
-            }
-            for (var i in style) {
-                if (i === key && style[i] === val) {
-                    return true;
-                }
-            }
-            return false;
-        },
-        addStyle : function (params) {
-            for (var key in params) {
-                if (this.hasStyle(key, params[key])) {
-                    delete params[key];
-                }
-            }
-            _setValue(id, 'style', _formatStyle(params, _getValue(id, 'style')));
-            return this;
-        },
-        removeStyle : function (params) {
-            var style = _getValue(id, 'style');
-            if (style) {
-                style = _styleToJson(style);
-            }
-            for (var i in params) {
-                if (this.hasStyle(i, params[i])) {
-                    delete style[i];
-                }
-            }
-            _setValue(id, 'style', _formatStyle(style));
-            return this;
-        },
-        toggleStyle : function (params) {
-            for (var key in params) {
-                if (this.hasStyle(key, params[key])) {
-                    var style = {};
-                    style[key] = params[key];
-                    this.removeStyle(style);
-                    delete params[key];
-                }
-            }
-            this.addStyle(params);
-            return this;
-        }, 
-        show : function () {
-            this.removeStyle({'display' : 'none'});
-            return this;
-        },
-        hide : function () {
-            this.addStyle({'display' : 'none'});
-            return this;
-        },
-        toggle : function () {
-            if (this.hasStyle('display', 'none')) {
-                this.show();
-            } else {
-                this.hide();
-            }
-            return this;
-        },
-        hasClass : function (name) {
-            var classes = _getValue(id, 'class');
-            if (classes === undefined) {
-                classes = [];
-            } else {
-                classes = classes.split(' ');
-            }
-            if (classes.indexOf(name) > -1) {
-                return true;
-            }
-            return false;
-        },
-        addClass : function () {
-            var classes = _getValue(id, 'class');
-            if (classes === undefined) {
-                classes = [];
-            } else {
-                classes = classes.split(' ');
-            }
-            for (var i in arguments) {
-                if (!this.hasClass(arguments[i])) {
-                    classes.push(arguments[i]);
-                }
-            }
-            _setValue(id, 'class', classes.join(' '));
-            return this;
-        },
-        removeClass : function () {
-            var classes = _getValue(id, 'class');
-            if (classes === undefined) {
-                classes = '';
-            }
-            for (var i in arguments) {
-                classes = classes.replace(arguments[i], '');
-            }
-            _setValue(id, 'class', classes.trim());
-            return this;
-        },
-        toggleClass : function () {
-            var classes = _getValue(id, 'class');
-            if (classes === undefined) {
-                classes = [];
-            } else {
-                classes = classes.split(' ');
-            }
-            for (var i = 0; i < arguments.length; i++) {
-                if (!this.hasClass(arguments[i])) {
-                    classes.push(arguments[i]);
-                } else {
-                    classes.remove(arguments[i]);
-                }
-            }
-            _setValue(id, 'class', classes.join(' '));
-            return this;
-        },
-        text : function (str) {
-            _setValue(id, 'text', str);
-            return this;
-        },
-        attr : function (key, value) {
-            _setValue(id, 'attr.' + key, value);
-            return this;
-        },
-        value : function (object) {
-            if (typeof object === 'object') {
-                object = JSON.stringify(object);
-            }
-            _setValue(id, 'value', object);
-            return this;
-        },
-        bind : function (type, callback) {
-            var name = _target.name;
-            if (!_eventsObject[name]) {
-                _eventsObject[name] = {};
-            }
-            if (!_eventsObject[name][id]) {
-                _eventsObject[name][id] = {};
-            }
-            if (!_eventsObject[name][id]['events']) {
-                _eventsObject[name][id]['events'] = {}
-            }
-            if (callback && typeof callback === 'function') {
-                _eventsObject[name][id]['events'][type] = callback;
-            }
-            return this;
-        },
-        unbind : function (type) {
-            var name = _target.name;
-            if (!_eventsObject[name]) {
-                _eventsObject[name] = {};
-            }
-            if (!_eventsObject[name][id]) {
-                _eventsObject[name][id] = {};
-            }
-            if (!_eventsObject[name][id]['events']) {
-                _eventsObject[name][id]['events'] = {}
-            }
-            delete _eventsObject[name][id]['events'][type];
-            return this;
-        },
-        getValue : function (key) {
-            return _getValue(id, key);
-        },
-        setValue : function (key, value) {
-            _setValue(id, key, value);
-            return this;
-        }
-    };
+  return new $.fn.init(id)
 }
+$.fn = $.prototype = {
+  init: function(id){
+    this.id = id;
+  },
+  hasStyle: function (key, val) {
+    var style = _getValue(this.id, 'style');
+    if (style) {
+      style = _styleToJson(style);
+    }
+    for (var i in style) {
+      if (i === key && style[i] === val) {
+        return true;
+      }
+    }
+    return false;
+  },
+  addStyle: function (params) {
+    for (var key in params) {
+      if (this.hasStyle(key, params[key])) {
+        delete params[key];
+      }
+    }
+    _setValue(this.id, 'style', _formatStyle(params, _getValue(this.id, 'style')));
+    return this;
+  },
+  removeStyle: function (params) {
+    var style = _getValue(this.id, 'style');
+    if (style) {
+      style = _styleToJson(style);
+    }
+    for (var i in params) {
+      if (this.hasStyle(i, params[i])) {
+        delete style[i];
+      }
+    }
+    _setValue(this.id, 'style', _formatStyle(style));
+    return this;
+  },
+  toggleStyle: function (params) {
+    for (var key in params) {
+      if (this.hasStyle(key, params[key])) {
+        var style = {};
+        style[key] = params[key];
+        this.removeStyle(style);
+        delete params[key];
+      }
+    }
+    this.addStyle(params);
+    return this;
+  },
+  show: function () {
+    this.removeStyle({ 'display': 'none' });
+    return this;
+  },
+  hide: function () {
+    this.addStyle({ 'display': 'none' });
+    return this;
+  },
+  toggle: function () {
+    if (this.hasStyle('display', 'none')) {
+      this.show();
+    } else {
+      this.hide();
+    }
+    return this;
+  },
+  hasClass: function (name) {
+    var classes = _getValue(this.id, 'class');
+    if (classes === undefined) {
+      classes = [];
+    } else {
+      classes = classes.split(' ');
+    }
+    if (classes.indexOf(name) > -1) {
+      return true;
+    }
+    return false;
+  },
+  addClass: function () {
+    var classes = _getValue(this.id, 'class');
+    if (classes === undefined) {
+      classes = [];
+    } else {
+      classes = classes.split(' ');
+    }
+    for (var i in arguments) {
+      if (!this.hasClass(arguments[i])) {
+        classes.push(arguments[i]);
+      }
+    }
+    _setValue(this.id, 'class', classes.join(' '));
+    return this;
+  },
+  removeClass: function () {
+    var classes = _getValue(this.id, 'class');
+    if (classes === undefined) {
+      classes = '';
+    }
+    for (var i in arguments) {
+      classes = classes.replace(arguments[i], '');
+    }
+    _setValue(this.id, 'class', classes.trim());
+    return this;
+  },
+  toggleClass: function () {
+    var classes = _getValue(this.id, 'class');
+    if (classes === undefined) {
+      classes = [];
+    } else {
+      classes = classes.split(' ');
+    }
+    for (var i = 0; i < arguments.length; i++) {
+      if (!this.hasClass(arguments[i])) {
+        classes.push(arguments[i]);
+      } else {
+        classes.remove(arguments[i]);
+      }
+    }
+    _setValue(this.id, 'class', classes.join(' '));
+    return this;
+  },
+  text: function (str) {
+    _setValue(this.id, 'text', str);
+    return this;
+  },
+  attr: function (key, value) {
+    _setValue(this.id, 'attr.' + key, value);
+    return this;
+  },
+  value: function (object) {
+    if (typeof object === 'object') {
+      object = JSON.stringify(object);
+    }
+    _setValue(this.id, 'value', object);
+    return this;
+  },
+  bind: function (type, callback) {
+    var name = _target.name;
+    if (!_eventsObject[name]) {
+      _eventsObject[name] = {};
+    }
+    if (!_eventsObject[name][this.id]) {
+      _eventsObject[name][this.id] = {};
+    }
+    if (!_eventsObject[name][this.id]['events']) {
+      _eventsObject[name][this.id]['events'] = {}
+    }
+    if (callback && typeof callback === 'function') {
+      _eventsObject[name][this.id]['events'][type] = callback;
+    }
+    return this;
+  },
+  unbind: function (type) {
+    var name = _target.name;
+    if (!_eventsObject[name]) {
+      _eventsObject[name] = {};
+    }
+    if (!_eventsObject[name][this.id]) {
+      _eventsObject[name][this.id] = {};
+    }
+    if (!_eventsObject[name][this.id]['events']) {
+      _eventsObject[name][this.id]['events'] = {}
+    }
+    delete _eventsObject[name][this.id]['events'][type];
+    return this;
+  },
+  getValue: function (key) {
+    return _getValue(this.id, key);
+  },
+  setValue: function (key, value) {
+    _setValue(this.id, key, value);
+    return this;
+  }
+}
+$.fn.init.prototype = $.fn
 
 module.exports = {
     $ : $,
